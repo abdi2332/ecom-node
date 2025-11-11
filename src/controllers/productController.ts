@@ -3,6 +3,8 @@ import { prisma } from "../prismaClient";
 import { createProductSchema, updateProductSchema } from "../utils/validator";
 import { Prisma } from "@prisma/client";
 import { cache } from "../utils/cache";
+import multer from "multer";
+import { uploadToCloudinary } from "../utils/cloudinary";
 
 export const createProduct = async (req: Request, res: Response) => {
 	const data = createProductSchema.parse(req.body);
@@ -113,4 +115,27 @@ export const listProducts = async (req: Request, res: Response) => {
   await cache.set(cacheKey, response);
 
   res.json(response);
+};
+
+
+export const upload = multer({ storage: multer.memoryStorage() });
+
+export const uploadProductImage = async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image provided' });
+    }
+
+    const imageUrl = await uploadToCloudinary(req.file);
+    
+    // Update product with image URL
+    const product = await prisma.product.update({
+      where: { id: req.params.id },
+      data: { imageUrl },
+    });
+
+    res.json({ success: true, message: 'Image uploaded', object: product });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Image upload failed' });
+  }
 };
