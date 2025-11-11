@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../prismaClient";
+import prisma from "../prismaClient"; 
 import { createProductSchema, updateProductSchema } from "../utils/validator";
 import { Prisma } from "@prisma/client";
 import { cache } from "../utils/cache";

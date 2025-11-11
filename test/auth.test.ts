@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 describe('Auth Controller', () => {
   describe('POST /auth/register', () => {
-    it('should register a new user successfully', async () => {
+    it(' register a new user successfully', async () => {
       const userData = {
         username: 'testuser',
         email: 'test@example.com',
@@ -35,7 +35,7 @@ describe('Auth Controller', () => {
       expect(response.body.object.password).toBeUndefined();
     });
 
-    it('should return 400 for duplicate email', async () => {
+    it(' return 400 for duplicate email', async () => {
       const userData = {
         username: 'testuser',
         email: 'existing@example.com',
@@ -63,7 +63,7 @@ describe('Auth Controller', () => {
   });
 
   describe('POST /auth/login', () => {
-    it('should login successfully with valid credentials', async () => {
+    it(' login successfully with valid credentials', async () => {
       const loginData = {
         email: 'test@example.com',
         password: 'Test123!@#'
@@ -88,7 +88,7 @@ describe('Auth Controller', () => {
       expect(response.body.object.token).toBeDefined();
     });
 
-    it('should return 401 for invalid credentials', async () => {
+    it(' should return 401 for invalid credentials', async () => {
       const loginData = {
         email: 'nonexistent@example.com',
         password: 'wrongpassword'
