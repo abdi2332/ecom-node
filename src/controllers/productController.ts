@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../prismaClient";
-import { createProductSchema, updateProductSchema } from "../utils/validators";
+import { createProductSchema, updateProductSchema } from "../utils/validator";
 import { Prisma } from "@prisma/client";
 
 export const createProduct = async (req: Request, res: Response) => {
