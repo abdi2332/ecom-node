@@ -1,57 +1,44 @@
-E-Commerce REST API
+# E-Commerce REST API
+
 A comprehensive e-commerce backend API built with Node.js, Express, TypeScript, and PostgreSQL. Provides full-featured e-commerce functionality including user authentication, product management, order processing, and advanced search capabilities.
 
-Features
-User Authentication with JWT
+## Features
 
-Product Management (CRUD operations)
+- **User Authentication** with JWT
+- **Product Management** with full CRUD operations
+- **Order Processing** with stock validation
+- **Advanced Search and Filtering** capabilities
+- **Redis Caching** for enhanced performance
+- **Rate Limiting** for security
+- **API Documentation** with Swagger
+- **Image Uploads** with Cloudinary integration
+- **Comprehensive Unit Testing** suite
 
-Order Processing with stock validation
+## Technology Stack
 
-Advanced Search and Filtering
+- **Node.js with TypeScript** - Type safety and modern JavaScript features
+- **Express.js** - Lightweight and flexible web framework
+- **PostgreSQL** - Reliable relational database with ACID compliance
+- **Prisma ORM** - Type-safe database client with excellent TypeScript support
+- **JWT** - Stateless authentication for scalable applications
+- **Redis** - High-performance caching for frequently accessed data
+- **Zod** - Runtime type validation for robust API input handling
+- **Jest** - Comprehensive testing framework with mocking capabilities
+- **Docker** - Containerization for consistent development environments
 
-Redis Caching for performance
+## Prerequisitess
 
-Rate Limiting for security
+- Node.js 18 or higher
+- PostgreSQL 15 or higher
+- Redis 7 or higher
+- Cloudinary account (for image uploads)
 
-API Documentation with Swagger
+## Environment Configuration
 
-Image Uploads with Cloudinary
+Create a `.env` file in the root directory with the following variables:
 
-Comprehensive Unit Testing
-
-Technology Choices
-Node.js with TypeScript: Type safety and modern JavaScript features
-
-Express.js: Lightweight and flexible web framework
-
-PostgreSQL: Reliable relational database with ACID compliance
-
-Prisma ORM: Type-safe database client with excellent TypeScript support
-
-JWT: Stateless authentication for scalable applications
-
-Redis: High-performance caching for frequently accessed data
-
-Zod: Runtime type validation for robust API input handling
-
-Jest: Comprehensive testing framework with mocking capabilities
-
-Docker: Containerization for consistent development environments
-
-Prerequisites
-Node.js 18 or higher
-
-PostgreSQL 15 or higher
-
-Redis 7 or higher
-
-Cloudinary account (for image uploads)
-
-Environment Variables
-Create a .env file in the root directory with the following variables:
-
-# Database
+```env
+# Database Configuration
 DATABASE_URL="postgresql://username:password@localhost:5432/ecommerce?schema=public"
 
 # JWT Configuration
@@ -66,10 +53,20 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# Application
+# Application Configuration
 NODE_ENV=development
 PORT=4000
-Local Development Setup
+
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/ecommerce?schema=public"
+
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_here
+JWT_EXPIRES_IN=7d
+
+
+
+## Local Development Setup
 Clone the repository
 
 bash
