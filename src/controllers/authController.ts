@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../prismaClient";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { registerSchema, loginSchema } from "../utils/validators";
+import { registerSchema, loginSchema } from "../utils/validator";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h";
