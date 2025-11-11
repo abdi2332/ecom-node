@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../prismaClient";
 import { createProductSchema, updateProductSchema } from "../utils/validator";
 import { Prisma } from "@prisma/client";
+import { cache } from "../utils/cache";
 
 export const createProduct = async (req: Request, res: Response) => {
 	const data = createProductSchema.parse(req.body);
@@ -38,29 +39,58 @@ export const getProduct = async (req: Request, res: Response) => {
 };
 
 export const listProducts = async (req: Request, res: Response) => {
-	const page = Math.max(1, Number(req.query.page || 1));
-	const pageSize = Math.max(1, Number(req.query.pageSize || req.query.limit || 10));
-	const search = (req.query.search as string) || "";
+  const page = Math.max(1, Number(req.query.page || 1));
+  const pageSize = Math.max(1, Number(req.query.pageSize || req.query.limit || 10));
+  const search = (req.query.search as string) || '';
+  const category = (req.query.category as string) || '';
 
-	const where = search ? { name: { contains: search, mode: "insensitive" } } : {};
-
-	const total = await prisma.product.count({ where });
-	const products = await prisma.product.findMany({
-		where,
-		skip: (page - 1) * pageSize,
-		take: pageSize,
-		orderBy: { createdAt: "desc" },
-		select: { id: true, name: true, price: true, stock: true, category: true, description: true, createdAt: true },
-	});
-
-	const totalPages = Math.ceil(total / pageSize);
+  
+  const cacheKey = cache.generateProductsCacheKey(page, pageSize, search, { category });
 
 
-	res.json({
-		currentPage: page,
-		pageSize: pageSize,
-		totalPages: totalPages,
-		totalProducts: total,
-		products: products
-	});
+  try {
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+   	 
+      return res.json(cached);
+    }
+  } catch (error) {
+    console.log('Cache miss, querying database');
+  }
+
+  // Build where clause
+  const where: any = {};
+  if (search) {
+    where.name = { contains: search, mode: "insensitive" };
+  }
+  if (category) {
+    where.category = category;
+  }
+
+  const total = await prisma.product.count({ where });
+  const products = await prisma.product.findMany({
+    where,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    orderBy: { createdAt: "desc" },
+    select: { 
+      id: true, name: true, price: true, stock: true, 
+      category: true, description: true, createdAt: true 
+    },
+  });
+
+  const totalPages = Math.ceil(total / pageSize);
+
+  const response = {
+    currentPage: page,
+    pageSize: pageSize,
+    totalPages: totalPages,
+    totalProducts: total,
+    products: products
+  };
+
+  
+  await cache.set(cacheKey, response);
+
+  res.json(response);
 };
