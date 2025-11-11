@@ -43,6 +43,10 @@ export const listProducts = async (req: Request, res: Response) => {
   const pageSize = Math.max(1, Number(req.query.pageSize || req.query.limit || 10));
   const search = (req.query.search as string) || '';
   const category = (req.query.category as string) || '';
+  const minPrice = Number(req.query.minPrice) || 0;
+  const maxPrice = Number(req.query.maxPrice) || Number.MAX_SAFE_INTEGER;
+  const sortBy = (req.query.sortBy as string) || 'createdAt';
+  const sortOrder = (req.query.sortOrder as string) || 'desc';
 
   
   const cacheKey = cache.generateProductsCacheKey(page, pageSize, search, { category });
@@ -55,8 +59,9 @@ export const listProducts = async (req: Request, res: Response) => {
       return res.json(cached);
     }
   } catch (error) {
-    console.log('Cache miss, querying database');
+    console.error("Cache error:", error);
   }
+  console.log('Cache miss, querying database');
 
   // Build where clause
   const where: any = {};
@@ -67,16 +72,27 @@ export const listProducts = async (req: Request, res: Response) => {
     where.category = category;
   }
 
+	where.price = { gte: minPrice, lte: maxPrice };
+
+	const orderBy: any = {};
+  orderBy[sortBy] = sortOrder;
+
   const total = await prisma.product.count({ where });
   const products = await prisma.product.findMany({
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: { createdAt: "desc" },
+    orderBy,
     select: { 
       id: true, name: true, price: true, stock: true, 
       category: true, description: true, createdAt: true 
     },
+  });
+
+	const categories = await prisma.product.findMany({
+    distinct: ['category'],
+    select: { category: true },
+    where: { category: { not: null } }
   });
 
   const totalPages = Math.ceil(total / pageSize);
@@ -86,7 +102,11 @@ export const listProducts = async (req: Request, res: Response) => {
     pageSize: pageSize,
     totalPages: totalPages,
     totalProducts: total,
-    products: products
+    products: products,
+    filters: {
+      categories: categories.map(c => c.category).filter(Boolean),
+      priceRange: { min: 0, max: 1000}
+    }
   };
 
   
