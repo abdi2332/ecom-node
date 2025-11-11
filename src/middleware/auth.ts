@@ -27,3 +27,9 @@ export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction
   if (req.user.role !== "Admin") return res.status(403).json({ success: false, message: "Forbidden: admin only" });
   next();
 };
+
+export const requireUser = (req: AuthRequest, res: Response, next: NextFunction) => {
+	if (!req.user) return res.status(401).json({ success: false, message: "Unauthorized" });
+	if (req.user.role !== "User" )return res.status(403).json({ success: false, message: "Forbidden: user only" });
+	next();
+}
