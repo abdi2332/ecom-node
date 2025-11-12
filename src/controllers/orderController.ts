@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../prismaClient";
+import prisma from "../prismaClient"; 
 import { placeOrderSchema } from "../utils/validator";
 import { AuthRequest } from "../middleware/auth";
 
